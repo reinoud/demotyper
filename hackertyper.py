@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import curses
-import logging
 import random
 import re
 import sys
@@ -17,7 +16,7 @@ class TextFile(object):
         self.raw_content = ''
         self.filtered_content = ''
         self.stops = {}
-        self.filename = filename
+        self.cursor_pos = 0
         if filename:
             self.readfile(filename)
 
@@ -58,8 +57,13 @@ class TextFile(object):
 
     def nextstop(self, pos):
         """return the next stop and the type of it after position pos in filtered_content """
-        nextstop = min([x for x in self.stops.keys() if x >= pos])
-        return nextstop, self.stops[nextstop]
+        try:
+            nextstop = min([x for x in self.stops.keys() if x >= pos])
+            delimiter_type = self.stops[nextstop]
+        except ValueError:
+            nextstop = len(self.filtered_content) + 1
+            delimiter_type = 'end'
+        return nextstop, delimiter_type
 
     def lineforpos(self, pos):
         """ line number when cursor is at char pos in the file"""
@@ -74,39 +78,43 @@ class TextFile(object):
     def text(self, pos):
         return self.filtered_content[:pos]
 
+    def advance(self, key):
+        """ advance the cursor in the document after a keystroke
 
-src = ""
+        normal case: advance random 1-3 positions
+        when a return delimiter is passed: stop at return position
+        when at return position: key needs to be '\n' to advance to next text delimiter, otherwise stay
+        """
+        advance = random.choice(range(3))
+        nextstop, delimiter_type = self.nextstop(self.cursor_pos)
 
-logging.basicConfig(filename="hackertyper.log", level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
+        if delimiter_type == 'return' and nextstop == self.cursor_pos:
+            if key == '\n':
+                self.cursor_pos, delimiter_type = self.nextstop(self.cursor_pos + 1)
+            # else wait; do not advance cursor
+        elif delimiter_type == 'return' and self.cursor_pos + advance >= nextstop:
+            self.cursor_pos = nextstop
+        else:
+            self.cursor_pos += advance
+
+        return self.cursor_pos
 
 
 def add_text(text_window, src_len):
-    logging.debug("in add_text")
-    # text_window.addstr(0,0,src[0:src_len])
     contents = hackertyper.text(src_len)
-    # formatted_contents = highlight(contents, PythonLexer(), Terminal256Formatter())
     text_window.addstr(0, 0, contents)
 
 
 def main(stdscr):
-    """
-    """
-    logging.debug("starting hackertyper")
-    logging.debug("read {} lines from file".format(hackertyper.number_of_lines, hackertyper.filename))
     stdscr.clear()
-    logging.debug("clear")
-    src_len = 0
-    while True and src_len < len(hackertyper.filtered_content):
-        logging.debug("top loop")
-        add = random.choice(range(3))
-        src_len += add
+    cursor_pos = 0
+    while True and cursor_pos <= len(hackertyper.filtered_content):
         inputkey = stdscr.getkey()
-        logging.debug(inputkey)
-        add_text(stdscr, src_len)
+        cursor_pos = hackertyper.advance(inputkey)
+        add_text(stdscr, cursor_pos)
 
 
 if __name__ == '__main__':
-    logging.debug("----")
     filename_arg = sys.argv[-1]
     hackertyper = TextFile(filename_arg)
     curses.wrapper(main)

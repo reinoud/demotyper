@@ -7,11 +7,22 @@ Invoke with a source file to control what gets typed to the screen.
 
   ./hackertyper.py /path/to/src/file.py
 
-TODO:
 
-* add syntax highlighting.  This is not as straightforward as I'd hoped
+## advanced usage
 
+when doing a demo, you can "type" commands, and get "output"
 
+Put this in the file with special delimiters:
 
-[hackertyper]:http://hackertyper.com
-
+  - `<% t %>` start of a command block
+  - `<% r %>` start of an output block
+  
+  example:
+  
+  ```
+  $ ls -a<% r %>
+  .	..	.git .gitignore README.md hackertyper.py
+  <% t %>
+  $ file hackertyper.py<% r %>
+  hackertyper.py: Python script text executable, ASCII text
+  ```
