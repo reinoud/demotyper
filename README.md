@@ -14,7 +14,7 @@ when doing a demo, you can "type" commands, and get "output"
 
 Put this in the file with special delimiters:
 
-  - `<% t %>` start of a text block (will be treaded normally)
+  - `<% t %>` start of a text block (will be treated normally)
   - `<% r %>` start of an output block (will appear at once when enter is pressed)
   
   example file:
