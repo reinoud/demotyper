@@ -108,10 +108,17 @@ def add_text(text_window, src_len):
 def main(stdscr):
     stdscr.clear()
     cursor_pos = 0
-    while True and cursor_pos <= len(hackertyper.filtered_content):
-        inputkey = stdscr.getkey()
-        cursor_pos = hackertyper.advance(inputkey)
-        add_text(stdscr, cursor_pos)
+    try:
+        while True and cursor_pos <= len(hackertyper.filtered_content):
+            inputkey = stdscr.getkey()
+            cursor_pos = hackertyper.advance(inputkey)
+            add_text(stdscr, cursor_pos)
+        inputkey = ''
+        while inputkey != 'Q':
+            inputkey = stdscr.getkey()
+    except KeyboardInterrupt:
+        # clean exit without exception on screen when ctrl-C is pressed
+        pass
 
 
 if __name__ == '__main__':
