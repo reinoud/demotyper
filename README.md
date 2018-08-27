@@ -1,11 +1,10 @@
 # HackerTyper for Python
 
-hkrtpr is intended to provide [HackerTyper][hackertyper]-style productivity for any machine with a
-working python and curses implementation.
+This is an improved version of hkrtpr, intended to 'demo' typing in a terminal window
 
 Invoke with a source file to control what gets typed to the screen.
 
-  ./hackertyper.py /path/to/src/file.py
+  ./hackertyper.py /path/to/src/file
 
 
 ## advanced usage
