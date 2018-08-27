@@ -6,6 +6,7 @@ Invoke with a source file to control what gets typed to the screen.
 
   ./hackertyper.py /path/to/src/file
 
+Note: at the end of the file a capital Q is needed to exit, to make sure your screen is not suddenly empty again :-)
 
 ## advanced usage
 
