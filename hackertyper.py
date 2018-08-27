@@ -5,7 +5,6 @@ import random
 import re
 import sys
 
-
 DELIMITERS = {'<% t %>': 'text',
               '<% r %>': 'return'}
 
@@ -13,6 +12,7 @@ DELIMITERS = {'<% t %>': 'text',
 class TextFile(object):
     def __init__(self, filename=None):
         self.number_of_lines = 0
+        self.number_of_cols = 0
         self.raw_content = ''
         self.filtered_content = ''
         self.stops = {}
@@ -28,6 +28,7 @@ class TextFile(object):
             sys.exit(1)
         self.filtered_content = self.filteredoutput(self.raw_content)
         self.number_of_lines = self.lines_in_string(self.filtered_content)
+        self.number_of_cols = max(len(l) for l in self.filtered_content)
         self.findskippoints()
 
     @staticmethod
@@ -67,7 +68,10 @@ class TextFile(object):
 
     def lineforpos(self, pos):
         """ line number when cursor is at char pos in the file"""
-        return self.lines_in_string(self.filtered_content[:pos])
+        return self.lines_in_string(self.filtered_content[:pos]) - 1
+
+    def currentline(self):
+        return self.lineforpos(self.cursor_pos)
 
     @staticmethod
     def filteredoutput(string):
@@ -75,8 +79,9 @@ class TextFile(object):
         p = re.compile('(' + '|'.join(DELIMITERS.keys()) + ')')
         return p.sub('', string)
 
-    def text(self, pos):
-        return self.filtered_content[:pos]
+    def text(self, pos=None, maxlines=25):
+        all_text = self.filtered_content[:pos]
+        return '\n'.join(all_text.split('\n')[maxlines * -1:])
 
     def advance(self, key):
         """ advance the cursor in the document after a keystroke
@@ -100,19 +105,17 @@ class TextFile(object):
         return self.cursor_pos
 
 
-def add_text(text_window, src_len):
-    contents = hackertyper.text(src_len)
-    text_window.addstr(0, 0, contents)
-
-
 def main(stdscr):
     stdscr.clear()
+    maxy, maxx = stdscr.getmaxyx()
     cursor_pos = 0
     try:
         while True and cursor_pos <= len(hackertyper.filtered_content):
             inputkey = stdscr.getkey()
             cursor_pos = hackertyper.advance(inputkey)
-            add_text(stdscr, cursor_pos)
+            contents = hackertyper.text(cursor_pos, maxy)
+            stdscr.clrtoeol()
+            stdscr.addstr(0, 0, contents)
         inputkey = ''
         while inputkey != 'Q':
             inputkey = stdscr.getkey()
