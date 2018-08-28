@@ -29,8 +29,8 @@ Put this in the file with special delimiters:
   
   ```
   $ ls -a<% r %>
-  .	..	.git .gitignore README.md hackertyper.py
+  .	..	.git .gitignore README.md demotyper.py
   <% t %>
-  $ file hackertyper.py<% r %>
-  hackertyper.py: Python script text executable, ASCII text
+  $ file demotyoer.py<% r %>
+  demotyper.py: Python script text executable, ASCII text
   ```
