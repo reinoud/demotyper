@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import argparse
 import curses
 import random
 import re
@@ -10,30 +11,23 @@ DELIMITERS = {'<% t %>': 'text',
 
 
 class TextFile(object):
-    def __init__(self, filename=None):
-        self.number_of_lines = 0
-        self.number_of_cols = 0
+    def __init__(self, filename=None, prompt=''):
         self.raw_content = ''
         self.filtered_content = ''
         self.stops = {}
-        self.cursor_pos = 0
+        self.prompt = prompt
+        self.cursor_pos = len(self.prompt)
         if filename:
             self.readfile(filename)
 
     def readfile(self, filename):
         try:
-            self.raw_content = open(filename).read()
+            self.raw_content = self.prompt + open(filename).read()
         except Exception as e:
             sys.stderr.write("error reading file {}: {}".format(filename, e))
             sys.exit(1)
         self.filtered_content = self.filteredoutput(self.raw_content)
-        self.number_of_lines = self.lines_in_string(self.filtered_content)
-        self.number_of_cols = max(len(l) for l in self.filtered_content)
         self.findskippoints()
-
-    @staticmethod
-    def lines_in_string(multilinestring):
-        return len(multilinestring.splitlines())
 
     def findskippoints(self):
         """find points in the raw string that are marked by the delimiters
@@ -66,20 +60,13 @@ class TextFile(object):
             delimiter_type = 'end'
         return nextstop, delimiter_type
 
-    def lineforpos(self, pos):
-        """ line number when cursor is at char pos in the file"""
-        return self.lines_in_string(self.filtered_content[:pos]) - 1
-
-    def currentline(self):
-        return self.lineforpos(self.cursor_pos)
-
     @staticmethod
     def filteredoutput(string):
         """filter delimiters from string"""
         p = re.compile('(' + '|'.join(DELIMITERS.keys()) + ')')
         return p.sub('', string)
 
-    def text(self, pos=None, maxlines=25):
+    def text(self, pos=None, maxlines=500):
         all_text = self.filtered_content[:pos]
         return '\n'.join(all_text.split('\n')[maxlines * -1:])
 
@@ -95,25 +82,34 @@ class TextFile(object):
 
         if delimiter_type == 'return' and nextstop == self.cursor_pos:
             if key == '\n':
-                self.cursor_pos, delimiter_type = self.nextstop(self.cursor_pos + 1)
+                self.cursor_pos = self.nextstop(self.cursor_pos + 1)[0]
             # else wait; do not advance cursor
         elif delimiter_type == 'return' and self.cursor_pos + advance >= nextstop:
             self.cursor_pos = nextstop
         else:
             self.cursor_pos += advance
 
-        return self.cursor_pos
+
+def getargs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--file", "-f", dest="filename", help="filename to demo")
+    parser.add_argument("--prompt", "-p", dest="prompt", help="initial prompt", default='')
+    local_args = parser.parse_args()
+    if not local_args.filename:
+        print "FATAL: need filename (see --help)"
+        exit(1)
+    return local_args
 
 
 def main(stdscr):
-    stdscr.clear()
-    maxy, maxx = stdscr.getmaxyx()
-    cursor_pos = 0
     try:
-        while True and cursor_pos <= len(hackertyper.filtered_content):
-            inputkey = stdscr.getkey()
-            cursor_pos = hackertyper.advance(inputkey)
-            contents = hackertyper.text(cursor_pos, maxy)
+        stdscr.clear()
+        if len(args.prompt) > 0:
+            contents = hackertyper.text(hackertyper.cursor_pos, stdscr.getmaxyx()[0])
+            stdscr.addstr(0, 0, contents)
+        while hackertyper.cursor_pos <= len(hackertyper.filtered_content):
+            hackertyper.advance(stdscr.getkey())
+            contents = hackertyper.text(hackertyper.cursor_pos, stdscr.getmaxyx()[0])
             stdscr.clrtoeol()
             stdscr.addstr(0, 0, contents)
         inputkey = ''
@@ -125,6 +121,6 @@ def main(stdscr):
 
 
 if __name__ == '__main__':
-    filename_arg = sys.argv[-1]
-    hackertyper = TextFile(filename_arg)
+    args = getargs()
+    hackertyper = TextFile(args.filename, args.prompt)
     curses.wrapper(main)
