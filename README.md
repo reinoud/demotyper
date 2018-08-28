@@ -1,10 +1,21 @@
 # Demotyper for Python
 
+
+Do you give presentations where you switch from slides to a terminal screen to do an interactive demo?
+
+Do these demo's sometimes fail? Do you suddenly make lots of typo's? Does this take you out of concentration?
+
+### then this is the tool for you!
+
 This is an improved version of hkrtpr, intended to 'demo' typing in a terminal window
 
 Invoke with a source file to control what gets typed to the screen.
 
     demotyper.py -f /path/to/src/file
+
+The screen wil clear, and the sourcefile will be displayed on the screen, with a few characters per keystroke. 
+Just like you are typing them, but without any typo's!
+
 
 Note: at the end of the file a capital Q is needed to exit, to make sure your screen is not suddenly empty again :-)
 
