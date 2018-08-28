@@ -91,8 +91,8 @@ class TextFile(object):
 
 
 def getargs():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--file", "-f", dest="filename", help="filename to demo")
+    parser = argparse.ArgumentParser(description='Simulate typing and output in a terminal window')
+    parser.add_argument("--file", "-f", dest="filename", help="filename to simulate typing", required=True)
     parser.add_argument("--prompt", "-p", dest="prompt", help="initial prompt", default='')
     local_args = parser.parse_args()
     if not local_args.filename:
@@ -105,11 +105,11 @@ def main(stdscr):
     try:
         stdscr.clear()
         if len(args.prompt) > 0:
-            contents = hackertyper.text(hackertyper.cursor_pos, stdscr.getmaxyx()[0])
+            contents = demotyper.text(demotyper.cursor_pos, stdscr.getmaxyx()[0])
             stdscr.addstr(0, 0, contents)
-        while hackertyper.cursor_pos <= len(hackertyper.filtered_content):
-            hackertyper.advance(stdscr.getkey())
-            contents = hackertyper.text(hackertyper.cursor_pos, stdscr.getmaxyx()[0])
+        while demotyper.cursor_pos <= len(demotyper.filtered_content):
+            demotyper.advance(stdscr.getkey())
+            contents = demotyper.text(demotyper.cursor_pos, stdscr.getmaxyx()[0])
             stdscr.clrtoeol()
             stdscr.addstr(0, 0, contents)
         inputkey = ''
@@ -122,5 +122,5 @@ def main(stdscr):
 
 if __name__ == '__main__':
     args = getargs()
-    hackertyper = TextFile(args.filename, args.prompt)
+    demotyper = TextFile(args.filename, args.prompt)
     curses.wrapper(main)
