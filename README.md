@@ -1,14 +1,22 @@
-# HackerTyper for Python
+# Demotyper for Python
 
 This is an improved version of hkrtpr, intended to 'demo' typing in a terminal window
 
 Invoke with a source file to control what gets typed to the screen.
 
-  ./hackertyper.py /path/to/src/file
+    demotyper.py -f /path/to/src/file
 
 Note: at the end of the file a capital Q is needed to exit, to make sure your screen is not suddenly empty again :-)
 
 ## advanced usage
+
+### prompt
+
+To start the session with a fake prompt, use the `-p` option like this
+
+    demotyper.py -f /path/to/src/file -p '$ '
+
+### delimiters
 
 when doing a demo, you can "type" commands, and get "output"
 
