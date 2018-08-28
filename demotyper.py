@@ -67,9 +67,13 @@ class TextFile(object):
         p = re.compile('(' + '|'.join(DELIMITERS.keys()) + ')')
         return p.sub('', string)
 
-    def text(self, pos=None, maxlines=500):
+    def text(self, pos=None, maxyx=(500,80)):
+        """return the contents until pos, cut off everything outside of the window boundaries"""
         all_text = self.filtered_content[:pos]
-        return '\n'.join(all_text.split('\n')[maxlines * -1:])
+        lines = all_text.split('\n')[(maxyx[0] - 1) * -1:]
+        for lineno, line in enumerate(lines):
+            lines[lineno] = line[:maxyx[1] - 1]
+        return '\n'.join(lines)
 
     def advance(self, key):
         """ advance the cursor in the document after a keystroke
@@ -109,11 +113,11 @@ def main(stdscr):
     try:
         stdscr.clear()
         if len(args.prompt) > 0:
-            contents = demotyper.text(demotyper.cursor_pos, stdscr.getmaxyx()[0])
+            contents = demotyper.text(demotyper.cursor_pos, stdscr.getmaxyx())
             stdscr.addstr(0, 0, contents)
         while demotyper.cursor_pos <= len(demotyper.filtered_content):
             demotyper.advance(stdscr.getkey())
-            contents = demotyper.text(demotyper.cursor_pos, stdscr.getmaxyx()[0])
+            contents = demotyper.text(demotyper.cursor_pos, stdscr.getmaxyx())
             stdscr.clrtoeol()
             stdscr.addstr(0, 0, contents)
         inputkey = ''
