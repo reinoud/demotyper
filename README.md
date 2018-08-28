@@ -11,7 +11,7 @@ This is an improved version of hkrtpr, intended to 'demo' typing in a terminal w
 
 Invoke with a source file to control what gets typed to the screen.
 
-    demotyper.py -f /path/to/src/file
+    demotyper.py /path/to/src/file
 
 The screen wil clear, and the sourcefile will be displayed on the screen, with a few characters per keystroke. 
 Just like you are typing them, but without any typo's!
@@ -25,7 +25,7 @@ Note: at the end of the file a capital Q is needed to exit, to make sure your sc
 
 To start the session with a fake prompt, use the `-p` option like this
 
-    demotyper.py -f /path/to/src/file -p '$ '
+    demotyper.py -p '$ ' /path/to/src/file 
 
 ### delimiters
 
