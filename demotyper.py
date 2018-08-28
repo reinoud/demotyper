@@ -11,11 +11,12 @@ DELIMITERS = {'<% t %>': 'text',
 
 
 class TextFile(object):
-    def __init__(self, filename=None, prompt=''):
+    def __init__(self, filename=None, prompt='', anykey=False):
         self.raw_content = ''
         self.filtered_content = ''
         self.stops = {}
         self.prompt = prompt
+        self.anykey = anykey
         self.cursor_pos = len(self.prompt)
         if filename:
             self.readfile(filename)
@@ -81,7 +82,7 @@ class TextFile(object):
         nextstop, delimiter_type = self.nextstop(self.cursor_pos)
 
         if delimiter_type == 'return' and nextstop == self.cursor_pos:
-            if key == '\n':
+            if key == '\n' or self.anykey:
                 self.cursor_pos = self.nextstop(self.cursor_pos + 1)[0]
             # else wait; do not advance cursor
         elif delimiter_type == 'return' and self.cursor_pos + advance >= nextstop:
@@ -92,8 +93,11 @@ class TextFile(object):
 
 def getargs():
     parser = argparse.ArgumentParser(description='Simulate typing and output in a terminal window')
-    parser.add_argument("--file", "-f", dest="filename", help="filename to simulate typing", required=True)
     parser.add_argument("--prompt", "-p", dest="prompt", help="initial prompt", default='')
+    parser.add_argument("--anykey", "-a", dest="anykey",
+                        help="accept any key before returning output block (instead of only enter)",
+                        action="store_true", default=False)
+    parser.add_argument("--file", "-f", dest="filename", help="filename to simulate typing", required=True)
     local_args = parser.parse_args()
     if not local_args.filename:
         print "FATAL: need filename (see --help)"
@@ -122,5 +126,5 @@ def main(stdscr):
 
 if __name__ == '__main__':
     args = getargs()
-    demotyper = TextFile(args.filename, args.prompt)
+    demotyper = TextFile(args.filename, args.prompt, args.anykey)
     curses.wrapper(main)
