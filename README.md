@@ -45,3 +45,5 @@ Put this in the file with special delimiters:
   $ file demotyoer.py<% r %>
   demotyper.py: Python script text executable, ASCII text
   ```
+  
+use the `-a` option to accept any key (as opposed to `enter` before returning an output block)
