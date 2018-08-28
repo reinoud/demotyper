@@ -97,7 +97,7 @@ def getargs():
     parser.add_argument("--anykey", "-a", dest="anykey",
                         help="accept any key before returning output block (instead of only enter)",
                         action="store_true", default=False)
-    parser.add_argument("--file", "-f", dest="filename", help="filename to simulate typing", required=True)
+    parser.add_argument("filename", help="filename to simulate typing")
     local_args = parser.parse_args()
     if not local_args.filename:
         print "FATAL: need filename (see --help)"
