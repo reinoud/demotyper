@@ -67,7 +67,7 @@ class TextFile(object):
         p = re.compile('(' + '|'.join(DELIMITERS.keys()) + ')')
         return p.sub('', string)
 
-    def text(self, pos=None, maxyx=(500,80)):
+    def text(self, pos=None, maxyx=(500, 80)):
         """return the contents until pos, cut off everything outside of the window boundaries"""
         all_text = self.filtered_content[:pos]
         lines = all_text.split('\n')[(maxyx[0] - 1) * -1:]
