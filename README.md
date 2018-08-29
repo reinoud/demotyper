@@ -26,6 +26,11 @@ Note: at the end of the file a capital Q is needed to exit, to make sure your sc
 To start the session with a fake prompt, use the `-p` option like this
 
     demotyper.py -p '$ ' /path/to/src/file 
+    
+### skip whitespace
+
+when you demo typing indented text -like sourcecode- it might look strange to have to type a lot of spaces, since modern 
+editors will indent automatically. This behaviour can be be mimiced by `--skipwhitespace` or `-s`
 
 ### delimiters
 

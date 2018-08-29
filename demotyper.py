@@ -11,12 +11,13 @@ DELIMITERS = {'<% t %>': 'text',
 
 
 class TextFile(object):
-    def __init__(self, filename=None, prompt='', anykey=False):
+    def __init__(self, filename=None, prompt='', anykey=False, skipwhitespace=False):
         self.raw_content = ''
         self.filtered_content = ''
         self.stops = {}
         self.prompt = prompt
         self.anykey = anykey
+        self.skipwhitespace = skipwhitespace
         self.cursor_pos = len(self.prompt)
         if filename:
             self.readfile(filename)
@@ -93,6 +94,9 @@ class TextFile(object):
             self.cursor_pos = nextstop
         else:
             self.cursor_pos += advance
+            if self.skipwhitespace:
+                while self.filtered_content[self.cursor_pos] == ' ':
+                    self.cursor_pos += 1
 
 
 def getargs():
@@ -101,6 +105,8 @@ def getargs():
     parser.add_argument("--anykey", "-a", dest="anykey",
                         help="accept any key before returning output block (instead of only enter)",
                         action="store_true", default=False)
+    parser.add_argument("--skipwhitespace", "-s", dest="skipwhitespace", help="skip whitespace", action="store_true",
+                        default=False)
     parser.add_argument("filename", help="filename to simulate typing")
     local_args = parser.parse_args()
     if not local_args.filename:
@@ -130,5 +136,5 @@ def main(stdscr):
 
 if __name__ == '__main__':
     args = getargs()
-    demotyper = TextFile(args.filename, args.prompt, args.anykey)
+    demotyper = TextFile(args.filename, args.prompt, args.anykey, args.skipwhitespace)
     curses.wrapper(main)
