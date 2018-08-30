@@ -99,7 +99,7 @@ class TextFile(object):
                     while self.filtered_content[self.cursor_pos] == ' ':
                         self.cursor_pos += 1
                 except IndexError:
-                    pass
+                    self.cursor_pos -= 1
 
 
 def getargs():
