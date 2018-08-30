@@ -35,7 +35,7 @@ class TextFile(object):
         """find points in the raw string that are marked by the delimiters
 
         This will return a dict with character position as key, and the type of delimiter as value:
-        {36: 'text', 14: 'return'}
+        {36: 'text', 14: 'return'} (stored in self.stops)
 
         Note that the positions are for removed delimiters, so they are correct for self.filtered_content
         """
@@ -95,8 +95,11 @@ class TextFile(object):
         else:
             self.cursor_pos += advance
             if self.skipwhitespace:
-                while self.filtered_content[self.cursor_pos] == ' ':
-                    self.cursor_pos += 1
+                try:
+                    while self.filtered_content[self.cursor_pos] == ' ':
+                        self.cursor_pos += 1
+                except IndexError:
+                    pass
 
 
 def getargs():
@@ -105,14 +108,10 @@ def getargs():
     parser.add_argument("--anykey", "-a", dest="anykey",
                         help="accept any key before returning output block (instead of only enter)",
                         action="store_true", default=False)
-    parser.add_argument("--skipwhitespace", "-s", dest="skipwhitespace", help="skip whitespace", action="store_true",
-                        default=False)
+    parser.add_argument("--skipwhitespace", "-s", dest="skipwhitespace", help="skip whitespace while typing",
+                        action="store_true", default=False)
     parser.add_argument("filename", help="filename to simulate typing")
-    local_args = parser.parse_args()
-    if not local_args.filename:
-        print "FATAL: need filename (see --help)"
-        exit(1)
-    return local_args
+    return parser.parse_args()
 
 
 def main(stdscr):
