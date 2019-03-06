@@ -52,3 +52,7 @@ Put this in the file with special delimiters:
   ```
   
 use the `-a` option to accept any key (as opposed to `enter` before returning an output block)
+
+## installation
+
+copy the script in a directory in your path (/usr/bin on Linux or OSX) and make it executable (chmod +x demotyper.py)
