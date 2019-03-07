@@ -103,7 +103,8 @@ class TextFile(object):
 
 
 def getargs():
-    parser = argparse.ArgumentParser(description='Simulate typing and output in a terminal window')
+    parser = argparse.ArgumentParser(description='Simulate typing and output in a terminal window. ' +
+                                    'Use <% r %> to wait for return and output everything until <% t %>')
     parser.add_argument("--prompt", "-p", dest="prompt", help="initial prompt", default='')
     parser.add_argument("--anykey", "-a", dest="anykey",
                         help="accept any key before returning output block (instead of only enter)",
